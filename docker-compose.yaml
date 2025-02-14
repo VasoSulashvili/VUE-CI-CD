@@ -1,0 +1,18 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+#      args:
+#        UID: ${UID:-1000}  # Use current UID or default to 1000
+#        GID: ${GID:-1000}
+#    user: "${UID}:${GID}"
+    ports:
+      - "8000:80"
+      - "5173:5173"
+    volumes:
+      - .:/usr/share/nginx/html
+#    working_dir: /usr/share/nginx/html
+#    environment:
+#      WWWUSER: '${WWWUSER}'
+#      WWWGROUP: '${WWWGROUP}'
