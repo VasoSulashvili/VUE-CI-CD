@@ -35,25 +35,43 @@ jobs:
         with:
           name: build
           path: app/dist/build.zip
-#  lint-job:
-#    name: Lint Job
-#    needs: [build-job]
-#    runs-on: ubuntu-22.04
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@v2
-#      - name: Setup node
-#        uses: actions/setup-node@v2
-#        with:
-#          node-version: *
-#      - name: Cache node modules
-#        uses: actions/cache@v2
-#        with:
-#          path: node_modules
-#          key: cached_node_modules
-#      - name: Install dependencies
-#        if: steps.cache.outputs.cache-hit != 'true'
-#        run: cd app && npm install
-#      - name: Run Lints
-#        run: cd app && npm run lint
+
+  lint-job:
+    name: Lint Job
+    needs: [build-job]
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18
+
+      - name: Cache node modules
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: cached_node_modules
+
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: cd app && npm install
+
+      - name: Run Lints
+        run: cd app && npm run lint
+
+  security-audit-job:
+    name: Security Audit Job
+    needs: [build-job]
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Check for vulnerabilities
+        run: cd app && npm audit --audit-level=high
+
       
