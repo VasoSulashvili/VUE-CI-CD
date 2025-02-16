@@ -6,7 +6,7 @@ RUN apt-get update
 RUN apt-get install -y nodejs && apt-get install -y npm
 
 COPY . /usr/share/nginx/html
-COPY ./default.conf /etc/nginx/conf.d/default.conf
+COPY ./configs/default.conf /etc/nginx/conf.d/default.conf
 
 #User and group for non-root
 ARG UID=1000
