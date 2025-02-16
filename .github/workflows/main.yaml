@@ -74,4 +74,38 @@ jobs:
       - name: Check for vulnerabilities
         run: cd app && npm audit --audit-level=high
 
-      
+
+
+  static-analysis-job:
+    name: Static Analysis Job
+    needs: [build-job]
+    runs-on: ubuntu-22.04
+    permissions:
+      security-events: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: javascript
+
+      - name: Setup node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18
+
+      - name: Cache node modules
+        id: cache
+        uses: actions/cache@v4
+        with:
+          key: ${{ runner.os }}-node_modules-${{ hashFiles('**/package-lock.json') }}
+          path: app/node_modules
+
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: cd app && npm install
+
+      - name: Analyze code
+        uses: github/codeql-action/analyze@v2
