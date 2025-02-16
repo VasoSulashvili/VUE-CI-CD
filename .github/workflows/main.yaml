@@ -13,16 +13,18 @@ jobs:
         with:
           node-version: 18
 
-      - name: Cache node modules
-        id: cache
-        uses: actions/cache@v4
-        with:
-          path: app/node_modules
-          key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
+
 
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
         run: cd app && npm install
+
+      - name: Cache node modules
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: ./app/node_modules
+          key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
 
       - name: Build
         run: cd app && npm run build
