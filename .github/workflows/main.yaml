@@ -7,21 +7,34 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+
       - name: Setup node
         uses: actions/setup-node@v2
         with:
           node-version: 18
+
       - name: Cache node modules
         id: cache
         uses: actions/cache@v2
         with:
           path: node_modules
           key: cached_node_modules
+
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
         run: cd app && npm install
+
       - name: Build
         run: cd app && npm run build
+
+      - name: Generate production artifacts
+        run: cd app/dist && zip -r build.zip ./ -x '*.git*'
+
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: build
+          path: app/dist/build.zip
 #  lint-job:
 #    name: Lint Job
 #    needs: [build-job]
